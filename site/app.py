@@ -301,7 +301,7 @@ def article(n: Notes):
           "Qwen2.5-7B on SciKnowEval chemistry, measuring in-domain accuracy against the average change on six general benchmarks."),
         Fig(F.forgetting(), B("SSD learns the new domain with the least forgetting. "), "In-domain accuracy on SciKnowEval chemistry "
             "against the average change on six general benchmarks (HellaSwag, HumanEval, IFEval, MMLU, TruthfulQA, Winogrande) after "
-            "fine-tuning Qwen2.5-7B. Labels give supervised tokens; error bars are 95% confidence intervals. Up and to the right is "
+            "fine-tuning Qwen2.5-7B. Labels give supervised tokens. Up and to the right is "
             "better.", wide=False),
         P("The off-policy methods SFT and FKL learn the new skill but lose about 6.6 points on the general benchmarks. On-policy "
           "SDFT loses 4.5 at comparable in-domain accuracy. SSD has both the highest in-domain accuracy (71.6, against 68.4 for "

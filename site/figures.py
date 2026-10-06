@@ -148,16 +148,14 @@ def forgetting():
     lab = {"SFT": (13, 22, "start"), "FKL": (-13, -10, "end"), "SDFT": (13, -8, "start"), "SSD": (14, -4, "start")}
     for r in d["rows"]:
         x, y = p.sx(r["sciqa"]), p.sy(r["delta"])
-        ci = abs(p.sy(r["delta"] + r["ci"]) - y)
         big = r["method"] == "SSD"
-        p.free.append(G(Line(x1=x, x2=x, y1=y - ci, y2=y + ci, stroke=C[r["kind"]], stroke_width=2, opacity=.5),
-                        Circle(r=9 if big else 7, cx=x, cy=y, fill=C[r["kind"]], stroke="#ffffff", stroke_width=2),
+        p.free.append(G(Circle(r=9 if big else 7, cx=x, cy=y, fill=C[r["kind"]], stroke="#ffffff", stroke_width=2),
                         T(r["method"], x=x + lab[r["method"]][0], y=y + lab[r["method"]][1], text_anchor=lab[r["method"]][2],
                           cls="ptlab b" if big else "ptlab"),
                         T(f"{r['tokens_m']}M tokens", x=x + lab[r["method"]][0], y=y + lab[r["method"]][1] + 15,
                           text_anchor=lab[r["method"]][2], cls="ptlab s"),
                         cls="pt", data_at=f"{order[r['method']]}", tabindex=0,
-                        data_tip=f"{r['method']}: SciQA {r['sciqa']}%, Δ {r['delta']:+.2f} ± {r['ci']}, {r['tokens_m']}M supervised tokens"))
+                        data_tip=f"{r['method']}: SciQA {r['sciqa']}%, Δ {r['delta']:+.2f}, {r['tokens_m']}M supervised tokens"))
     p.free.append(G(Path(d=f"M{p.sx(72.6)},{p.sy(-2.9)}l14,-14m0,0h-8m8,0v8", cls="better"),
                     T("better", x=p.sx(72.6) - 4, y=p.sy(-2.9) + 16, cls="anno", fill=INK2_), data_at=".85"))
     return Fig("forgetting", Chart("forgetting", W, H, p, label="Accuracy vs forgetting on Qwen2.5-7B"), Div(cls="tip"),
