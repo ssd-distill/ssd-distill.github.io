@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 FIG = ROOT / "poster/figures"
 C = {"off": "#ff751f", "ssd": "#3ccb81", "on": "#0cc0df"}    # the paper's plot colors
 CARDINAL = "#8c1515"
-LINKS = {"paper": "https://openreview.net/forum?id=6DlaA6eBt7", "blog": "https://ssd-distill.github.io/"}
+LINKS = {"paper": "https://openreview.net/pdf?id=6DlaA6eBt7", "blog": "https://ssd-distill.github.io/"}
 
 
 def forgetting():

@@ -12,7 +12,7 @@ import figures as F
 from method_anim import MethodFigure
 
 HERE = Path(__file__).resolve().parent
-PAPER = "https://openreview.net/pdf?id=HczpgMR6S3"
+PAPER = "https://openreview.net/pdf?id=6DlaA6eBt7"
 CODE = "https://anonymous.4open.science/r/Speculative-Self-Distillation/"
 POSTER = "static/media/ssd_poster.pdf"   # copy of poster/poster.pdf
 TITLE = "Speculative Self-Distillation"
