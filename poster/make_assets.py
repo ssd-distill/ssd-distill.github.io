@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 FIG = ROOT / "poster/figures"
 C = {"off": "#ff751f", "ssd": "#3ccb81", "on": "#0cc0df"}    # the paper's plot colors
 CARDINAL = "#8c1515"
-LINKS = {"paper": "https://openreview.net/pdf?id=HczpgMR6S3", "blog": "https://ssd-distill.github.io/"}
+LINKS = {"paper": "https://openreview.net/forum?id=6DlaA6eBt7", "blog": "https://ssd-distill.github.io/"}
 
 
 def forgetting():
@@ -26,8 +26,7 @@ def forgetting():
     fig, ax = plt.subplots(figsize=(6.6, 3.9))
     place = {"SFT": (8, -24, "left"), "FKL": (-12, 10, "right"), "SDFT": (12, 0, "left"), "SSD": (-14, -6, "right")}
     for r in rows:
-        ax.errorbar(r["sciqa"], r["delta"], yerr=r["ci"], fmt="o", ms=12 if r["method"] == "SSD" else 10, color=C[r["kind"]],
-                    mec="white", mew=1.5, elinewidth=2, capsize=0, zorder=3)
+        ax.plot(r["sciqa"], r["delta"], "o", ms=12 if r["method"] == "SSD" else 10, color=C[r["kind"]], mec="white", mew=1.5, zorder=3)
         dx, dy, ha = place[r["method"]]
         ax.annotate(f"{r['method']}", (r["sciqa"], r["delta"]), xytext=(dx, dy), textcoords="offset points", ha=ha, va="center",
                     fontsize=15, fontweight="bold")
