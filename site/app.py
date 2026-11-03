@@ -1,3 +1,4 @@
+# REVIEW notes (2026-11-03) mark blog text that is out of date with the paper. They are comments only and don't show on the site. Delete each one once it is fixed.
 """Speculative Self-Distillation: the blog. `python site/app.py` serves on :5001; export/build_static.py freezes it.
 
 Layout follows the Distill-to-Detect project page: sticky site header, centered post heading, cover image,
@@ -12,11 +13,14 @@ import figures as F
 from method_anim import MethodFigure
 
 HERE = Path(__file__).resolve().parent
+# REVIEW: points to the workshop paper (openreview 6DlaA6eBt7). Switch to the NeurIPS camera-ready / arXiv once it is out.
 PAPER = "https://openreview.net/pdf?id=6DlaA6eBt7"
+# REVIEW: anonymous 4open.science link. Switch to the public code repo.
 CODE = "https://anonymous.4open.science/r/Speculative-Self-Distillation/"
 POSTER = "static/media/ssd_poster.pdf"   # copy of poster/poster.pdf
 TITLE = "Speculative Self-Distillation"
 SUBTITLE = "Efficient knowledge internalization with per-token mixed-policy distillation"
+# REVIEW: 45%/34-57% are stale. The paper now gives 47/32/17% (total-token ratio at the end of training, 32% avg) and may switch to tokens-to-reach-on-policy accuracy (about 52/43/74%). Update after Arshia's Science Q&A reruns are final.
 TLDR = ("SSD lets the student write its own training rollouts and lets the teacher take over only at tokens where the "
         "document changes the prediction. It matches on-policy self-distillation with 45% fewer supervised tokens on average "
         "and forgets less of the model's general ability.")
@@ -131,6 +135,7 @@ def heading():
 
 
 TOC = [("setup", "Self-distillation and who writes the rollout"), ("why", "On-policy signal fades after ~15 tokens"),
+       # REVIEW: '34-57%' in the TOC title is stale (see TLDR note).
        ("inflection", "Inflection tokens"), ("method", "Speculative Self-Distillation"), ("results", "On-policy accuracy, 34–57% fewer tokens"),
        ("knob", "One knob from off- to on-policy"), ("curriculum", "The teacher steps back on its own"), ("forgetting", "It also forgets less"),
        ("citation", "Citation")]
@@ -153,6 +158,7 @@ def article(n: Notes):
           "the teacher replace student tokens that it considers unlikely.", *n.cite("skd"), " We bring this per-token view to "
           "self-distillation. In ", Strong("Speculative Self-Distillation (SSD)"), " the student writes by default and the "
           "teacher takes over only at tokens where the document changes the prediction. On three knowledge-acquisition tasks, "
+          # REVIEW: '45% fewer supervised tokens on average' is stale (see TLDR note).
           "SSD reaches the accuracy of on-policy self-distillation with 45% fewer supervised tokens on average, and it forgets "
           "less of the model's general ability."),
         Fig(MethodFigure(),
@@ -168,6 +174,7 @@ def article(n: Notes):
           "base model with $C$ in its context, and the student $\\pi_\\theta(\\cdot\\mid x)$ is the same model without it. The goal "
           "is to update $\\theta$ so that the student behaves like the teacher on new prompts, without being given $C$. All the "
           "methods we compare minimize the same token-level objective:",
+          # REVIEW: not true for Science Q&A, whose runs use an EMA teacher (rate 0.01). Company Memo and Wikipedia are frozen.
           *n.note("Throughout, the teacher is kept frozen at the initial weights, so every method is trained toward the same target.")),
         M("\\mathcal{L}(\\theta)=\\mathbb{E}_{y\\sim\\pi_{\\text{gen}}}\\Big[\\tfrac{1}{|y|}\\sum_t D\\big(\\pi_T(\\cdot\\mid x,C,y_{<t})"
           "\\,\\|\\,\\pi_\\theta(\\cdot\\mid x,y_{<t})\\big)\\Big]"),
@@ -187,6 +194,7 @@ def article(n: Notes):
           "an update that token produces; we call it the ", Strong("signal"), ". On the Wikipedia task (Figure 2), the on-policy signal "
           "is high for the first ~15 tokens of each rollout and then drops to a low level for the rest of it."),
         Fig(F.signal(), B("On-policy rollouts lose their training signal after a few tokens. "), "Off- and on-policy self-distillation "
+            # REVIEW: 'five times faster' - the paper now states the token rule behind 5x (appendix 'Runs behind Figure 2'). Align the wording.
             "on the Wikipedia task. Left: test accuracy against supervised tokens; off-policy converges about five times faster but "
             "plateaus lower. Middle: average per-token loss during training; off-policy rollouts start with more than twice the "
             "signal and use it up quickly. Right: per-token loss by position within a rollout; along on-policy rollouts it drops "
@@ -233,6 +241,7 @@ def article(n: Notes):
                  "    loss += D_loss(p_T ‖ p_S)      ", Span("# every position is supervised", cls="cm"), "\n"), cls="algo"),
         P("The name comes from speculative decoding, in which a small draft model proposes tokens and a larger model verifies "
           "them.", *n.cite("leviathan"), " Several distillation methods already switch between student and teacher inside a "
+          # REVIEW: SKD replaces student proposals that fall outside the teacher's top-k; it doesn't use student confidence (fixed in the paper).
           "sequence: SKD resamples low-confidence student tokens from the teacher's top-K distribution,", *n.cite("skd"),
           " AdaSwitch hands over to the teacher once a sliding-window KL divergence exceeds a threshold,", *n.cite("adaswitch"),
           " and SWITCH uses a per-position divergence criterion.", *n.cite("switch"), " These methods distill a separate teacher "
@@ -245,6 +254,7 @@ def article(n: Notes):
           " The divergence used for routing need not be the one used for training: $D_{\\text{switch}}$ decides who writes a token, "
           "and $D_{\\text{loss}}$ trains the student."),
 
+        # REVIEW: '34-57%' heading and caption are stale (see TLDR note).
         H2("On-policy accuracy with 34–57% fewer tokens", id="results"),
         P("We follow the evaluation protocol of SDFT", *n.cite("sdft"), " and use Qwen3-4B-Instruct as both student and teacher. The "
           "three tasks cover different reasons to internalize knowledge. ", Strong("Company Memo"), " is a synthetic internal "
@@ -255,17 +265,20 @@ def article(n: Notes):
           "and the on-policy baseline SDFT."),
         P("We measure cost in ", Em("supervised tokens"), ", the number of response positions on which the loss is computed. This is "
           "roughly proportional to compute, and it is a fairer comparison than optimizer steps: on-policy rollouts are longer than "
+          # REVIEW: the paper now has Sec 4.3 on end-to-end time: on Science Q&A, SSD reaches the best on-policy accuracy in ~130 vs ~410 min, and paired decoding runs at ~92% of student-only throughput. Update this paragraph and consider adding the time plot.
           "off-policy ones, so each on-policy step costs more."),
         P("Supervised tokens do not capture everything. SSD needs the teacher's next-token distribution at every decoding step, "
           "whereas on-policy training can score a finished rollout with a single parallel teacher pass. Because teacher and "
           "student share weights, both forward passes can run in the same batch at each step, but the teacher pass still happens "
           "during generation."),
+        # REVIEW: F.headline() uses data/*.json recovered from the pre-Oct-30 paper figure. Regenerate from the new 3-seed runs (Science Q&A on-policy is now 4 epochs).
         Fig(F.headline(), B("SSD reaches on-policy accuracy with 34–57% fewer supervised tokens. "), "Test accuracy against cumulative "
             "supervised tokens on Company Memo, Wikipedia and Science Q&A for the best off-policy baseline (SFT or FKL), on-policy "
             "SDFT and SSD. Arrows mark the savings at the on-policy plateau. The slider compares the methods at the same budget, as a "
             "fraction of the on-policy run; dots are individual evaluations and lines are smoothed."),
         P("On all three tasks the baselines show the same trade-off. Off-policy training improves quickly but levels off below the "
           "best accuracy; on-policy training reaches a higher plateau only after much more supervision. SSD follows the steep early "
+          # REVIEW: '44%, 34% and 57%' and '3 points above on-policy, 15 above off-policy' are stale. Paper: within noise of on-policy on two tasks, +3.6 on Science Q&A; off-policy 4.6 and 11.6 points below SSD on Wikipedia and Science Q&A.
           "part of the off-policy curve and then keeps improving to the on-policy plateau, which it reaches with 44%, 34% and 57% "
           "fewer supervised tokens. On Science Q&A it finishes about 3 points above on-policy and 15 points above off-policy."),
 
@@ -274,6 +287,7 @@ def article(n: Notes):
           "final accuracy is close to off-policy. As τ grows, more of each rollout is written by the student, and accuracy rises "
           "toward the on-policy level along with the cost. Intermediate thresholds reach higher accuracy than off-policy while "
           "converging faster than on-policy, so SSD traces a Pareto frontier between the two. With JSD as the switching divergence, "
+          # REVIEW: the 0.2-0.5 tau range is single-seed and the best point is tau=0.6. Keep in sync with paper Sec 4.5.
           "τ between 0.2 and 0.5 is a good default."),
         Fig(F.tau_frontier(), B("The threshold τ traces a Pareto frontier. "), "Final test accuracy against supervised tokens for SSD "
             "with JSD thresholds from 0 to 0.75, with the off- and on-policy baselines (Company Memo, Qwen3-4B-Instruct). Small τ "
@@ -304,6 +318,7 @@ def article(n: Notes):
             "fine-tuning Qwen2.5-7B. Labels give supervised tokens. Up and to the right is "
             "better.", wide=False),
         P("The off-policy methods SFT and FKL learn the new skill but lose about 6.6 points on the general benchmarks. On-policy "
+          # REVIEW: forgetting numbers are stale. Paper Table 2: SciQA 73.5 (SSD) vs 71.0 (on-policy), Delta -1.38 vs -4.47, tokens 2.20M vs 2.84M (23% fewer).
           "SDFT loses 4.5 at comparable in-domain accuracy. SSD has both the highest in-domain accuracy (71.6, against 68.4 for "
           "SDFT) and the smallest loss (−1.4), while using 22% fewer supervised tokens than SDFT."),
 
