@@ -24,7 +24,7 @@ DESC = ("SSD lets the student write its own training rollouts and lets the teach
         "document changes the prediction, matching on-policy self-distillation with 45% fewer supervised tokens.")
 # (name, homepage or None, affiliation marks)
 AUTHORS = [("Shayan Talaei", "https://shayantalaei.com/", "*1"), ("Agam Bhatia", "https://agammsbhatia.com/", "*1"),
-           ("Arshia Soltani Moakhar", None, "1"), ("Jonas Hübotter", "https://jonhue.github.io/", "2"),
+           ("Arshia Soltani Moakhar", None, "*1"), ("Jonas Hübotter", "https://jonhue.github.io/", "2"),
            ("Amin Saberi", "https://stanford.edu/~saberi/", "1"), ("Azalia Mirhoseini", "https://www.azaliamirhoseini.com/", "1")]
 MEDIA = [("method loop", "method_ssd"), ("on-policy loop", "method_onpolicy"), ("inflection fork", "fork"), ("signal", "signal"),
          ("headline", "headline"), ("τ frontier", "tau_frontier"), ("curriculum", "curriculum")]
