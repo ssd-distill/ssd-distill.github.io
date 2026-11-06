@@ -15,8 +15,7 @@ from method_anim import MethodFigure
 HERE = Path(__file__).resolve().parent
 # REVIEW: points to the workshop paper (openreview 6DlaA6eBt7). Switch to the NeurIPS camera-ready / arXiv once it is out.
 PAPER = "https://openreview.net/pdf?id=6DlaA6eBt7"
-# REVIEW: anonymous 4open.science link. Switch to the public code repo.
-CODE = "https://anonymous.4open.science/r/Speculative-Self-Distillation/"
+CODE = "https://github.com/ShayanTalaei/SpeculativeSelfDistillation"
 POSTER = "static/media/ssd_poster.pdf"   # copy of poster/poster.pdf
 TITLE = "Speculative Self-Distillation"
 SUBTITLE = "Efficient knowledge internalization with per-token mixed-policy distillation"
