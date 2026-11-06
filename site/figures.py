@@ -28,7 +28,7 @@ def headline():
     for i, p in enumerate(d["panels"]):
         s = p["series"]
         on_end = s["on"]["x"][-1]
-        xmax = {0: 700, 1: 1200, 2: 14000}[i]
+        xmax = {0: 800, 1: 1300, 2: 14000}[i]
         pan = Panel(f"hl{i}", 70 + i * (pw + gap), 44, pw, ph, (0, xmax), (0, 100), title=p["task"],
                     xlabel="supervised tokens (×1000)" if i == 1 else "", ylabel="test accuracy" if i == 0 else "",
                     yfmt=pct if i == 0 else (lambda v: ""), pend=on_end,
@@ -37,13 +37,14 @@ def headline():
             pan.raw(s[k]["raw"], C[k])
         for k in ("off", "on", "ssd"):
             pan.line(k, s[k]["x"], s[k]["y"], C[k], width=2.6 if k == "ssd" else 2.2)
-        # callout: SSD's endpoint vs on-policy's, revealed once the scrubber passes SSD's final token count
-        ssd_end, y_arrow = s["ssd"]["x"][-1], pan.sy(max(s["on"]["y"][-1], s["ssd"]["y"][-1]) + 5)
-        at = ssd_end / on_end
-        pan.free.append(G(Line(x1=pan.sx(on_end), x2=pan.sx(ssd_end) + 6, y1=y_arrow, y2=y_arrow, cls="callout-l"),
-                          Path(d=f"M{pan.sx(ssd_end) + 9},{y_arrow - 4}l-8,4l8,4", cls="callout-h"),
-                          T(f"−{p['saving']}% tokens", x=(pan.sx(on_end) + pan.sx(ssd_end)) / 2, y=y_arrow - 8,
-                            text_anchor="middle", cls="callout-t"), data_at=f"{min(at + .02, 1):.3f}"))
+        # callout (paper rule): from the best on-policy accuracy to the first point where SSD reaches it
+        # (Company Memo: SSD's best point), revealed once the scrubber passes that on-policy point
+        (x_on, y_on), (x_ssd, _) = p["arrow"]["on"], p["arrow"]["ssd"]
+        y_arrow = pan.sy(y_on) - 6
+        pan.free.append(G(Line(x1=pan.sx(x_on), x2=pan.sx(x_ssd) + 6, y1=y_arrow, y2=y_arrow, cls="callout-l"),
+                          Path(d=f"M{pan.sx(x_ssd) + 9},{y_arrow - 4}l-8,4l8,4", cls="callout-h"),
+                          T(f"−{p['saving']}% tokens", x=(pan.sx(x_on) + pan.sx(x_ssd)) / 2, y=y_arrow - 8,
+                            text_anchor="middle", cls="callout-t"), data_at=f"{min(x_on / on_end + .02, 1):.3f}"))
         panels.append(pan)
         panels.append(Readout(i, ["off", "ssd", "on"], pan.x + pw - 128, pan.y + ph - 58))
     svg = Chart("headline", W, 360, *panels, label="Test accuracy vs supervised tokens on three tasks")
