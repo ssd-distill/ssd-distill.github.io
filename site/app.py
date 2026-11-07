@@ -1,4 +1,3 @@
-# REVIEW notes (2026-11-03) mark blog text that is out of date with the paper. They are comments only and don't show on the site. Delete each one once it is fixed.
 """Speculative Self-Distillation: the blog. `python site/app.py` serves on :5001; export/build_static.py freezes it.
 
 Layout follows the Distill-to-Detect project page: sticky site header, centered post heading, cover image,
@@ -13,8 +12,7 @@ import figures as F
 from method_anim import MethodFigure
 
 HERE = Path(__file__).resolve().parent
-# REVIEW: points to the workshop paper (openreview 6DlaA6eBt7). Switch to the NeurIPS camera-ready / arXiv once it is out.
-PAPER = "https://openreview.net/pdf?id=6DlaA6eBt7"
+PAPER = "https://openreview.net/forum?id=6DlaA6eBt7"  # NeurIPS 2026 (switch to arXiv when it is out)
 CODE = "https://github.com/ShayanTalaei/SpeculativeSelfDistillation"
 POSTER = "static/media/ssd_poster.pdf"   # copy of poster/poster.pdf
 TITLE = "Speculative Self-Distillation"
