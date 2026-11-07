@@ -83,11 +83,6 @@ def tau_frontier():
     p = Panel("tf", 76, 30, 500, 300, (320, 730), (88, 94.5), xlabel="supervised tokens (×1000)", ylabel="test accuracy",
               yfmt=pct, yticks=[88, 89, 90, 91, 92, 93, 94], xticks=[350, 450, 550, 650])
     ssd = sorted((q for q in pts if q["kind"] == "ssd"), key=lambda q: q["tau"])
-    band_x0 = p.sx(next(q["tokens"] for q in ssd if q["tau"] == 0.2)) - 10
-    band_x1 = p.sx(next(q["tokens"] for q in ssd if q["tau"] == 0.5)) + 10
-    p.free.append(G(Rect(x=band_x0, y=p.y, width=band_x1 - band_x0, height=p.h, cls="sweet"),
-                    T("sweet spot  τ ∈ [0.2, 0.5]", x=(band_x0 + band_x1) / 2, y=p.y + 16, text_anchor="middle", cls="sweet-t"),
-                    data_at=".9"))
     # trend guide in the spirit of the paper's arrow: a saturating curve from the off-policy corner to on-policy's level
     on = next(q for q in pts if q["kind"] == "on")
     x0, x1, top = 342, on["tokens"] - 14, on["acc"]
@@ -140,13 +135,13 @@ def curriculum():
 def forgetting():
     d = DATA["forgetting"]
     W, H = 620, 380
-    p = Panel("fg", 80, 36, 480, 270, (66, 73), (-8, 0), xlabel="in-domain SciQA accuracy  (higher →)",
+    p = Panel("fg", 80, 36, 480, 270, (64, 75), (-8, 0), xlabel="in-domain SciQA accuracy  (higher →)",
               ylabel="change on 6 general benchmarks", yfmt=lambda v: f"{v:+g}" if v else "0", xfmt=pct,
-              yticks=[-8, -6, -4, -2, 0], xticks=[66, 68, 70, 72])
+              yticks=[-8, -6, -4, -2, 0], xticks=[64, 66, 68, 70, 72, 74])
     p.free.append(T("base model: Δ = 0", x=p.x + p.w - 4, y=p.sy(0) + 16, text_anchor="end", cls="anno", fill=INK2_))
     order = {"SFT": .1, "FKL": .25, "SDFT": .45, "SSD": .72}
     # label placement (dx, dy, anchor): SFT and FKL sit almost on top of each other
-    lab = {"SFT": (13, 22, "start"), "FKL": (-13, -10, "end"), "SDFT": (13, -8, "start"), "SSD": (14, -4, "start")}
+    lab = {"SFT": (13, 22, "start"), "FKL": (10, -36, "start"), "SDFT": (13, -8, "start"), "SSD": (14, -4, "start")}
     for r in d["rows"]:
         x, y = p.sx(r["sciqa"]), p.sy(r["delta"])
         big = r["method"] == "SSD"
@@ -157,8 +152,8 @@ def forgetting():
                           text_anchor=lab[r["method"]][2], cls="ptlab s"),
                         cls="pt", data_at=f"{order[r['method']]}", tabindex=0,
                         data_tip=f"{r['method']}: SciQA {r['sciqa']}%, Δ {r['delta']:+.2f}, {r['tokens_m']}M supervised tokens"))
-    p.free.append(G(Path(d=f"M{p.sx(72.6)},{p.sy(-2.9)}l14,-14m0,0h-8m8,0v8", cls="better"),
-                    T("better", x=p.sx(72.6) - 4, y=p.sy(-2.9) + 16, cls="anno", fill=INK2_), data_at=".85"))
+    p.free.append(G(Path(d=f"M{p.sx(74.2)},{p.sy(-2.9)}l14,-14m0,0h-8m8,0v8", cls="better"),
+                    T("better", x=p.sx(74.2) - 4, y=p.sy(-2.9) + 16, cls="anno", fill=INK2_), data_at=".85"))
     return Fig("forgetting", Chart("forgetting", W, H, p, label="Accuracy vs forgetting on Qwen2.5-7B"), Div(cls="tip"),
                Replay("forgetting"), dur=2600, cls="fig-narrow")
 
