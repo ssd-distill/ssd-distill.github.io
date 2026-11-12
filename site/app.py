@@ -12,7 +12,7 @@ import figures as F
 from method_anim import MethodFigure
 
 HERE = Path(__file__).resolve().parent
-PAPER = "https://openreview.net/forum?id=6DlaA6eBt7"  # NeurIPS 2026 (switch to arXiv when it is out)
+PAPER = "https://arxiv.org/abs/2611.12016"  # arXiv; NeurIPS 2026 forum: https://openreview.net/forum?id=6DlaA6eBt7
 CODE = "https://github.com/ShayanTalaei/SpeculativeSelfDistillation"
 POSTER = "static/media/ssd_poster.pdf"   # copy of poster/poster.pdf
 TITLE = "Speculative Self-Distillation"
@@ -34,7 +34,10 @@ BIBTEX = r"""@inproceedings{talaei2026ssd,
   author    = {Talaei, Shayan and Bhatia, Agam and Soltani Moakhar, Arshia and
                H{\"u}botter, Jonas and Saberi, Amin and Mirhoseini, Azalia},
   booktitle = {Advances in Neural Information Processing Systems},
-  year      = {2026}
+  year      = {2026},
+  eprint    = {2611.12016},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2611.12016}
 }"""
 
 # key -> (title, short author list, year, url or None); taken from the paper's references.bib
