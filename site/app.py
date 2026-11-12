@@ -135,7 +135,7 @@ def heading():
         cls="post-heading", id="top")
 
 
-TOC = [("setup", "Self-distillation and who writes the rollout"), ("why", "On-policy signal fades after ~15 tokens"),
+TOC = [("setup", "Self-distillation and who writes the rollout"), ("why", "On-policy signal fades after a few mistakes"),
        ("inflection", "Inflection tokens"), ("method", "Speculative Self-Distillation"), ("results", "Near on-policy accuracy, 38–69% fewer tokens"), ("walltime", "Less time on the clock"),
        ("knob", "One knob from off- to on-policy"), ("curriculum", "The teacher steps back on its own"), ("forgetting", "It also forgets less"), ("outlook", "Where this goes"),
        ("citation", "Citation")]
@@ -187,7 +187,7 @@ def article(n: Notes):
           "teacher scores every token of it.", *n.cite("gkd", "sdft", "tm_opd"), " Training and test-time behavior then match, and "
           "on-policy training reaches higher accuracy, but it is considerably slower."),
 
-        H2("On-policy signal fades after ~15 tokens", id="why"),
+        H2("On-policy signal fades after a few mistakes", id="why"),
         P("On Wikipedia, on-policy training needed about five times more supervised tokens than off-policy to reach 78% accuracy, so we looked at where its supervision "
           "goes. The per-token loss measures how much the teacher and the student disagree at a position, and therefore how large "
           "an update that token produces; we call it the ", Strong("signal"), ". On the Wikipedia task (Figure 2), the on-policy signal "
