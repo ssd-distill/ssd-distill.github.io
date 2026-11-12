@@ -51,7 +51,9 @@ body { margin: 0; font-family: var(--serif); font-size: 17px; line-height: 1.6; 
 .resource-links a:hover { color: var(--fg); text-decoration-color: var(--fg2); }
 .resource-links .link-icon { width: 15px; height: 15px; margin-right: 6px; vertical-align: -2.5px; }
 .resource-links .sep { color: var(--fg5); margin: 0 .55rem; }
-.logo-row { margin-top: 1.5rem; display: flex; justify-content: center; align-items: center; gap: 36px; }
+.logo-row { margin-top: 1.5rem; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 36px; }
+.logo-row .sil-link { justify-self: end; line-height: 0; } .logo-row .eth { justify-self: start; }
+.logo-row img.sil { height: 62px; }
 .logo-row img { height: 66px; width: auto; }
 .logo-row img.eth { height: 22px; }
 .tldr { max-width: 660px; margin: 1.8rem auto 0; padding: .9rem 1.2rem; text-align: left; font-family: var(--serif); font-size: 16.5px;
@@ -125,7 +127,7 @@ label.sidenote-number { display: inline; }
 @media (max-width: 640px) {
   body { font-size: 16.5px; }
   .post-title { font-size: 26px; margin-top: 1.8rem; }
-  .logo-row img { height: 52px; } .logo-row img.eth { height: 17px; }
+  .logo-row img { height: 52px; } .logo-row img.eth { height: 17px; } .logo-row img.sil { height: 48px; } .logo-row { column-gap: 22px; }
   .site-header .wordmark { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; font-size: 12.5px; }
   .site-header nav { gap: .9rem; }
   .scroll-x > .chart { min-width: 720px; } .fig-narrow .scroll-x > .chart { min-width: 520px; }

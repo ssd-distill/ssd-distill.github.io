@@ -129,8 +129,10 @@ def heading():
         Div(A(NotStr(ICON_PAPER), "Paper", href=PAPER, target="_blank", rel="noopener"), Span("·", cls="sep"),
             A(NotStr(ICON_CODE), "Code", href=CODE, target="_blank", rel="noopener"), Span("·", cls="sep"),
             A("Cite", href="#citation"), cls="resource-links"),
-        Div(Img(src="static/logos/stanford_color.png", alt="Stanford University"), Img(src="static/logos/eth.svg", alt="ETH Zürich", cls="eth"),
-            cls="logo-row"),
+        Div(A(Img(src="static/logos/scaling_intelligence.png", alt="Scaling Intelligence Lab", cls="sil"),
+              href="https://scalingintelligence.stanford.edu/", target="_blank", rel="noopener", cls="sil-link"),
+            Img(src="static/logos/stanford_color.png", alt="Stanford University", cls="stanford"),
+            Img(src="static/logos/eth.svg", alt="ETH Zürich", cls="eth"), cls="logo-row"),
         P(B("TL;DR "), TLDR, cls="tldr"),
         cls="post-heading", id="top")
 
