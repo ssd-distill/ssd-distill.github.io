@@ -44,6 +44,11 @@ body { margin: 0; font-family: var(--serif); font-size: 17px; line-height: 1.6; 
 .publish-metadata .authors a:hover { text-decoration: underline; text-underline-offset: 2px; }
 .publish-metadata .authors sup { font-size: .7em; color: var(--fg4); }
 .publish-metadata .affiliations { font-size: 13px; color: var(--fg4); margin-top: .45rem; }
+.venue { font-family: var(--serif); font-style: italic; font-size: 15.5px; color: var(--fg3); margin: .95rem auto 0; max-width: 720px; text-wrap: balance; }
+.venue .venue-main { font-style: normal; font-weight: 600; color: var(--fg1); }
+.venue .sep { font-style: normal; color: var(--fg5); margin: 0 .5rem; }
+.venue a { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--fg4) 40%, transparent); text-underline-offset: 3px; }
+.venue a:hover { color: var(--fg); text-decoration-color: var(--fg2); }
 .resource-links { font-family: var(--sans); font-size: 14px; margin-top: 1.1rem; }
 .resource-links a { color: var(--fg1); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--fg4) 40%, transparent); text-underline-offset: 3px; }
 .resource-links a:hover { color: var(--fg); text-decoration-color: var(--fg2); }
