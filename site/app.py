@@ -28,17 +28,15 @@ AUTHORS = [("Shayan Talaei", "https://shayantalaei.com/", "*1"), ("Agam Bhatia",
            ("Amin Saberi", "https://stanford.edu/~saberi/", "1"), ("Azalia Mirhoseini", "https://www.azaliamirhoseini.com/", "1")]
 MEDIA = [("method loop", "method_ssd"), ("on-policy loop", "method_onpolicy"), ("inflection fork", "fork"), ("signal", "signal"),
          ("headline", "headline"), ("τ frontier", "tau_frontier"), ("curriculum", "curriculum")]
-BIBTEX = r"""@inproceedings{talaei2026ssd,
-  title     = {Speculative Self-Distillation enables
-               Efficient Knowledge Internalization},
-  author    = {Talaei, Shayan and Bhatia, Agam and Soltani Moakhar, Arshia and
-               H{\"u}botter, Jonas and Saberi, Amin and Mirhoseini, Azalia},
-  booktitle = {Advances in Neural Information Processing Systems},
-  year      = {2026},
-  eprint    = {2611.12016},
-  archivePrefix = {arXiv},
-  url       = {https://arxiv.org/abs/2611.12016}
-}"""
+BIBTEX = r"""@misc{talaei2026speculativeselfdistillationenablesefficient,
+      title={Speculative Self-Distillation enables Efficient Knowledge Internalization}, 
+      author={Shayan Talaei and Agam Bhatia and Arshia Soltani Moakhar and Jonas Hübotter and Amin Saberi and Azalia Mirhoseini},
+      year={2026},
+      eprint={2611.12016},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2611.12016}, 
+}"""  # verbatim from https://arxiv.org/bibtex/2611.12016
 
 # key -> (title, short author list, year, url or None); taken from the paper's references.bib
 REFS = {
