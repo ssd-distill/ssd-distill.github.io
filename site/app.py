@@ -124,7 +124,7 @@ def heading():
         Div(P(*authors, cls="authors"),
             P(NotStr("<sup>*</sup>Equal contribution &nbsp;·&nbsp; <sup>1</sup>Stanford University &nbsp;·&nbsp; <sup>2</sup>ETH Zürich"),
               cls="affiliations"), cls="publish-metadata"),
-        P(Span("NeurIPS 2026", cls="venue-main"), Span("·", cls="sep"),
+        P("NeurIPS 2026", Span("·", cls="sep"),
           "COLM 2026 Workshops (Lifelong Agent & Context Beyond the Window)", cls="venue"),
         Div(A(NotStr(ICON_PAPER), "Paper", href=PAPER, target="_blank", rel="noopener"), Span("·", cls="sep"),
             A(NotStr(ICON_CODE), "Code", href=CODE, target="_blank", rel="noopener"), Span("·", cls="sep"),
