@@ -137,7 +137,7 @@ def heading():
 
 TOC = [("setup", "Self-distillation and who writes the rollout"), ("why", "On-policy signal fades after ~15 tokens"),
        ("inflection", "Inflection tokens"), ("method", "Speculative Self-Distillation"), ("results", "Near on-policy accuracy, 38–69% fewer tokens"), ("walltime", "Less time on the clock"),
-       ("knob", "One knob from off- to on-policy"), ("curriculum", "The teacher steps back on its own"), ("forgetting", "It also forgets less"),
+       ("knob", "One knob from off- to on-policy"), ("curriculum", "The teacher steps back on its own"), ("forgetting", "It also forgets less"), ("outlook", "Where this goes"),
        ("citation", "Citation")]
 
 
@@ -174,8 +174,7 @@ def article(n: Notes):
         P("Let $x$ be a prompt and $C$ the privileged context, for example a document. The teacher $\\pi_T(\\cdot\\mid x, C)$ is the "
           "base model with $C$ in its context, and the student $\\pi_\\theta(\\cdot\\mid x)$ is the same model without it. The goal "
           "is to update $\\theta$ so that the student behaves like the teacher on new prompts, without being given $C$. All the "
-          "methods we compare minimize the same token-level objective:",
-          *n.note("On Company Memo and Wikipedia the teacher is kept frozen at the initial weights. On Science Q&A it slowly tracks the student, as an exponential moving average with rate 0.01.")),
+          "methods we compare minimize the same token-level objective:"),
         M("\\mathcal{L}(\\theta)=\\mathbb{E}_{y\\sim\\pi_{\\text{gen}}}\\Big[\\tfrac{1}{|y|}\\sum_t D\\big(\\pi_T(\\cdot\\mid x,C,y_{<t})"
           "\\,\\|\\,\\pi_\\theta(\\cdot\\mid x,y_{<t})\\big)\\Big]"),
         P("where $D$ is a divergence between the two next-token distributions, such as forward KL, reverse KL or the Jensen–Shannon "
@@ -331,6 +330,12 @@ def article(n: Notes):
         P("The off-policy methods SFT and FKL learn the new skill but lose about 6.6 points on the general benchmarks. On-policy "
           "SDFT loses 4.5 while reaching higher in-domain accuracy. SSD has both the highest in-domain accuracy (73.5, against 71.0 "
           "for SDFT) and the smallest loss (−1.4), while using 23% fewer supervised tokens than SDFT."),
+
+        H2("Where this goes", id="outlook"),
+        P("Models increasingly need to absorb knowledge after deployment: private documents, updated facts, new domains. We see "
+          "self-distillation as a practical path there, and SSD as a step toward making it cheap enough to run routinely."),
+        P("We'd love to see what the community builds on this. The code, including our vLLM changes, is ",
+          A("open source", href=CODE, target="_blank", rel="noopener"), "."),
 
         H2("Citation", id="citation"),
         Div(Button("copy", cls="copy", type="button"), Pre(BIBTEX, cls="citation-block bib"), cls="bibwrap"),
