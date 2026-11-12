@@ -1,6 +1,6 @@
 """The hero figure: an animated SSD decoding loop (after Figures 1 and 3 of the paper).
 
-Rollout tokens are the paper's running example. The per-step top-3 distributions and δ_t values are illustrative
+SSD and on-policy rollout tokens are the paper's running example; the off-policy row is the teacher's own phrasing. The per-step top-3 distributions and δ_t values are illustrative
 (positions 0 and 5 follow Figure 1; the rest are made up to be consistent with it) and the caption says so.
 Python lays out one <g class="mode"> per rollout policy; anim.js drives everything from a single clock t.
 """
@@ -35,15 +35,30 @@ ON = SSD[:3] + [
     ("creating", "x", .09, [("creating", .30), ("building", .25), ("driving", .20)], [("creating", .35), ("building", .20), ("developing", .15)]),
     ("the", "x", .05, [("the", .50), ("and", .20), ("content", .10)], [("the", .55), ("and", .20), ("engaging", .10)]),
 ]
-OFF = [(tok, "t", d, tp, sp) for tok, _, d, tp, sp in SSD]
+# Off-policy: the teacher writes everything, in its own voice; it echoes the document, a phrasing the student cannot
+# produce without it. Punctuation is merged into the previous token so the row fits the same width.
+OFF = [
+    ("According", "t", .55, [("According", .48), ("Lina", .30), ("The", .10)], [("The", .40), ("Marketing", .35), ("Our", .10)]),
+    ("to", "t", .05, [("to", .97), ("the", .01), ("with", .01)], [("to", .90), ("our", .04), ("the", .03)]),
+    ("the", "t", .06, [("the", .92), ("our", .05), ("company", .02)], [("the", .70), ("our", .15), ("recent", .06)]),
+    ("memo,", "t", .45, [("memo,", .85), ("document,", .08), ("records,", .04)], [("website,", .25), ("report,", .20), ("data,", .15)]),
+    ("Lina", "t", .61, [("Lina", .90), ("the", .05), ("Ms.", .03)], [("the", .45), ("our", .15), ("John", .08)]),
+    ("Okafor", "t", .58, [("Okafor", .93), ("Osei", .03), ("Ortiz", .02)], [("Smith", .25), ("Chen", .12), ("Park", .10)]),
+    ("leads", "t", .20, [("leads", .80), ("heads", .12), ("manages", .05)], [("leads", .40), ("is", .25), ("manages", .15)]),
+    ("a", "t", .12, [("a", .75), ("the", .20), ("our", .02)], [("the", .50), ("a", .35), ("our", .06)]),
+    ("team", "t", .04, [("team", .92), ("group", .05), ("staff", .02)], [("team", .85), ("group", .08), ("department", .04)]),
+    ("of", "t", .15, [("of", .88), (",", .06), ("that", .03)], [("of", .55), ("that", .20), (",", .12)]),
+    ("12.", "t", .47, [("12.", .85), ("twelve.", .08), ("12,", .04)], [("five.", .20), ("10.", .18), ("experts.", .12)]),
+]
 MODES = {"off": (OFF, 0.0), "ssd": (SSD, TAU), "on": (ON, None)}
 MODE_LABEL = {"off": "Off-policy  ·  τ → 0", "ssd": "SSD  ·  τ = 0.3", "on": "On-policy  ·  τ → ∞"}
 
 
 def slot_xs(tokens) -> list[tuple[float, float]]:
     xs, x = [], X0
+    pad = 22 if len(tokens) <= 10 else 18          # the 11-token off-policy row uses slightly tighter slots
     for tok, *_ in tokens:
-        w = CH * len(tok) + 22
+        w = CH * len(tok) + pad
         xs.append((x, w)); x += w + GAP
     return xs
 

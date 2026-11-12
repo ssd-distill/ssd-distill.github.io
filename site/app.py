@@ -165,8 +165,10 @@ def article(n: Notes):
             I("C"), ". At each position both produce a next-token distribution (panels above and below the token being decided). "
             "The bars at the bottom show their divergence δ", Sub("t"), "; when it exceeds the threshold τ (dashed line), the teacher "
             "writes the token (orange), otherwise the student does (blue). The tabs replay the same prompt under off-policy (τ → 0), "
-            "SSD and on-policy (τ → ∞) generation. Tokens follow the paper's running example; the distributions and δ values are "
-            "illustrative."),
+            "SSD and on-policy (τ → ∞) generation. Off-policy text is the teacher's own phrasing, which echoes the document "
+            "(“According to the memo, …”) in a way the student cannot reproduce without it; SSD keeps the student's phrasing and "
+            "lets the teacher supply the facts. SSD and on-policy tokens follow the paper's running example; the distributions and "
+            "δ values are illustrative."),
 
         H2("Self-distillation and who writes the rollout", id="setup"),
         P("Let $x$ be a prompt and $C$ the privileged context, for example a document. The teacher $\\pi_T(\\cdot\\mid x, C)$ is the "
