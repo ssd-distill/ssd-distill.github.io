@@ -133,29 +133,65 @@ def curriculum():
 
 # ── Forgetting ────────────────────────────────────────────────────────────────────────────────────────────────────
 def forgetting():
+    """Base model at top left; arrows draw out to where each method ends (off-policy = FKL, the better of SFT and FKL)."""
     d = DATA["forgetting"]
-    W, H = 620, 380
-    p = Panel("fg", 80, 36, 480, 270, (64, 75), (-8, 0), xlabel="in-domain SciQA accuracy  (higher →)",
-              ylabel="change on 6 general benchmarks", yfmt=lambda v: f"{v:+g}" if v else "0", xfmt=pct,
-              yticks=[-8, -6, -4, -2, 0], xticks=[64, 66, 68, 70, 72, 74])
-    p.free.append(T("base model: Δ = 0", x=p.x + p.w - 4, y=p.sy(0) + 16, text_anchor="end", cls="anno", fill=INK2_))
-    order = {"SFT": .1, "FKL": .25, "SDFT": .45, "SSD": .72}
-    # label placement (dx, dy, anchor): SFT and FKL sit almost on top of each other
-    lab = {"SFT": (13, 22, "start"), "FKL": (10, -36, "start"), "SDFT": (13, -8, "start"), "SSD": (14, -4, "start")}
-    for r in d["rows"]:
-        x, y = p.sx(r["sciqa"]), p.sy(r["delta"])
-        big = r["method"] == "SSD"
-        p.free.append(G(Circle(r=9 if big else 7, cx=x, cy=y, fill=C[r["kind"]], stroke="#ffffff", stroke_width=2),
-                        T(r["method"], x=x + lab[r["method"]][0], y=y + lab[r["method"]][1], text_anchor=lab[r["method"]][2],
-                          cls="ptlab b" if big else "ptlab"),
-                        T(f"{r['tokens_m']}M tokens", x=x + lab[r["method"]][0], y=y + lab[r["method"]][1] + 15,
-                          text_anchor=lab[r["method"]][2], cls="ptlab s"),
-                        cls="pt", data_at=f"{order[r['method']]}", tabindex=0,
-                        data_tip=f"{r['method']}: SciQA {r['sciqa']}%, Δ {r['delta']:+.2f}, {r['tokens_m']}M supervised tokens"))
-    p.free.append(G(Path(d=f"M{p.sx(74.2)},{p.sy(-2.9)}l14,-14m0,0h-8m8,0v8", cls="better"),
-                    T("better", x=p.sx(74.2) - 4, y=p.sy(-2.9) + 16, cls="anno", fill=INK2_), data_at=".85"))
-    return Fig("forgetting", Chart("forgetting", W, H, p, label="Accuracy vs forgetting on Qwen2.5-7B"), Div(cls="tip"),
-               Replay("forgetting"), dur=2600, cls="fig-narrow")
+    W, H = 620, 390
+    p = Panel("fg", 80, 40, 490, 270, (28, 80), (-8, 1.5), xlabel="Science Q&A accuracy (trained task)",
+              ylabel="change in general ability", yfmt=lambda v: f"−{abs(v):g}" if v else "0", xfmt=pct,
+              yticks=[-8, -6, -4, -2, 0], xticks=[30, 40, 50, 60, 70, 80])
+    rows = {r["method"]: r for r in d["rows"]}
+    best_off = max(("SFT", "FKL"), key=lambda m: rows[m]["sciqa"])
+    bx, by = p.sx(d["base"]["sciqa"]), p.sy(d["base"]["delta"])
+    p.free.append(G(Circle(r=8, cx=bx, cy=by, fill="#ffffff", stroke="var(--ink)", stroke_width=2.2),
+                    T("Base model", x=bx, y=by - 17, text_anchor="middle", cls="ptlab b"),
+                    cls="pt", data_at="0", tabindex=0,
+                    data_tip=f"Base model: Science Q&A {d['base']['sciqa']}%, general ability Δ 0"))
+    # (method row, colour key, label, curvature, label dx/dy/anchor, reveal window)
+    spec = [(best_off, "off", "Off-policy", .30, (14, 5, "start"), (.04, .34)),
+            ("SDFT", "on", "On-policy", .16, (-4, 26, "middle"), (.30, .60)),
+            ("SSD", "ssd", "SSD (ours)", -.08, (-10, 26, "middle"), (.56, .86))]
+    for m, k, name, rad, (dx, dy, anc), (p0, p1) in spec:
+        r = rows[m]
+        tx, ty = p.sx(r["sciqa"]), p.sy(r["delta"])
+        L = math.hypot(tx - bx, ty - by); ux, uy = (tx - bx) / L, (ty - by) / L
+        sx0, sy0, ex, ey = bx + ux * 12, by + uy * 12, tx - ux * 15, ty - uy * 15
+        cx, cy = (sx0 + ex) / 2 - uy * rad * L, (sy0 + ey) / 2 + ux * rad * L
+        p.free.append(Path(d=f"M{sx0:.1f},{sy0:.1f} Q{cx:.1f},{cy:.1f} {ex:.1f},{ey:.1f}", cls="drawp fg-arr", id=f"fg-a-{k}",
+                           stroke=C[k], data_p0=p0, data_p1=p1))
+        p.free.append(G(Path(d="M2,0 L-20,-11 L-13,0 L-20,11 Z", transform="scale(.55)"), cls="arrowhead", data_for=f"fg-a-{k}",
+                        style=f"fill:{C[k]}"))
+        p.free.append(G(Circle(r=9 if k == "ssd" else 7.5, cx=tx, cy=ty, fill=C[k], stroke="#ffffff", stroke_width=2),
+                        T(name, x=tx + dx, y=ty + dy, text_anchor=anc, cls="ptlab b", style=f"fill:{C[k]}"),
+                        cls="pt", data_at=f"{p1 - .02:.2f}", tabindex=0,
+                        data_tip=f"{name} ({r['method']}): Science Q&A {r['sciqa']}%, general ability Δ {r['delta']:+.2f}"))
+    return Fig("forgetting", Chart("forgetting", W, H, p, label="Accuracy vs forgetting on Qwen2.5-7B, starting from the base model"),
+               Div(cls="tip"), Replay("forgetting"), dur=3000, cls="fig-narrow")
+
+
+# ── Training time: accuracy vs wall-clock minutes on Science Q&A (paper Fig. 5 data) ──────────────────────────────
+def walltime():
+    d = DATA["walltime"]
+    s = d["series"]
+    W, H = 620, 370
+    on_end = s["on"]["x"][-1]
+    p = Panel("wt", 80, 40, 490, 260, (0, 560), (0, 80), xlabel="training time (minutes)", ylabel="test accuracy",
+              yfmt=pct, yticks=[0, 20, 40, 60, 80], xticks=[0, 100, 200, 300, 400, 500], pend=on_end)
+    for k in ("off", "on", "ssd"):
+        xs, ys, sd = s[k]["x"], s[k]["y"], s[k]["sd"]
+        p.band(xs + xs[::-1], [a + b for a, b in zip(ys, sd)] + [a - b for a, b in zip(ys, sd)][::-1], C[k], opacity=.16)
+    for k in ("off", "on", "ssd"):
+        p.line(k, s[k]["x"], s[k]["y"], C[k], width=2.6 if k == "ssd" else 2.2)
+    (x_on, y_on), (x_ssd, _) = d["arrow"]["on"], d["arrow"]["ssd"]
+    ya = p.sy(y_on) - 26
+    p.free.append(G(Line(x1=p.sx(x_on), x2=p.sx(x_on), y1=p.sy(y_on), y2=ya, cls="callout-d"),
+                    Line(x1=p.sx(x_ssd), x2=p.sx(x_ssd), y1=p.sy(y_on), y2=ya, cls="callout-d"),
+                    Line(x1=p.sx(x_on), x2=p.sx(x_ssd) + 6, y1=ya, y2=ya, cls="callout-l"),
+                    Path(d=f"M{p.sx(x_ssd) + 9},{ya - 4}l-8,4l8,4", cls="callout-h"),
+                    T(f"−{d['saving']}% time", x=(p.sx(x_on) + p.sx(x_ssd)) / 2, y=ya - 8, text_anchor="middle", cls="callout-t"),
+                    data_at=f"{min(x_on / on_end + .02, 1):.3f}"))
+    svg = Chart("walltime", W, H, p, Readout(0, ["off", "ssd", "on"], p.x + p.w - 128, p.y + p.h - 58),
+                label="Test accuracy vs training time on Science Q&A")
+    return Fig("walltime", Legend(["off", "ssd", "on"]), svg, Replay("walltime"), dur=3800, cls="fig-narrow")
 
 
 # ── Routing at inference (no training) ────────────────────────────────────────────────────────────────────────────

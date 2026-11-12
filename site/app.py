@@ -136,7 +136,7 @@ def heading():
 
 
 TOC = [("setup", "Self-distillation and who writes the rollout"), ("why", "On-policy signal fades after ~15 tokens"),
-       ("inflection", "Inflection tokens"), ("method", "Speculative Self-Distillation"), ("results", "Near on-policy accuracy, 38–69% fewer tokens"),
+       ("inflection", "Inflection tokens"), ("method", "Speculative Self-Distillation"), ("results", "Near on-policy accuracy, 38–69% fewer tokens"), ("walltime", "Less time on the clock"),
        ("knob", "One knob from off- to on-policy"), ("curriculum", "The teacher steps back on its own"), ("forgetting", "It also forgets less"),
        ("citation", "Citation")]
 
@@ -263,11 +263,6 @@ def article(n: Notes):
         P("We measure cost in ", Em("supervised tokens"), ", the number of response positions on which the loss is computed. This is "
           "roughly proportional to compute, and it is a fairer comparison than optimizer steps: rollout lengths differ across "
           "methods, so an optimizer step does not cost the same in each."),
-        P("Supervised tokens do not capture everything. SSD needs the teacher's next-token distribution at every decoding step, "
-          "whereas on-policy training can score a finished rollout with a single parallel teacher pass. We run the teacher and "
-          "the student concurrently in a modified vLLM engine, with the teacher on a second GPU, and a joint decoding step runs at "
-          "about 92% of the speed of a student-only step. On Science Q&A, SSD reaches the best on-policy accuracy after about 130 "
-          "minutes of training, against about 414 minutes for on-policy training."),
         Fig(F.headline(), B("SSD nearly matches on-policy accuracy with 38–69% fewer supervised tokens. "), "Test accuracy against "
             "cumulative supervised tokens on Company Memo, Wikipedia and Science Q&A for the stronger off-policy baseline (SFT or "
             "FKL), on-policy SDFT and SSD. Lines are means over three training seeds and dots are individual seeds. Each arrow runs "
@@ -279,8 +274,29 @@ def article(n: Notes):
           "Science Q&A. On Company Memo it comes within 1.4 points of it with 48% fewer, so across the three tasks SSD stays close to "
           "on-policy accuracy while using 38–69% fewer supervised tokens."),
 
+        H2("Fewer tokens, less time on the clock", id="walltime"),
+        P("Supervised tokens are a proxy; what matters in practice is how long training takes. On Science Q&A, SSD reaches the "
+          "best on-policy accuracy after about 130 minutes of training, while on-policy training needs about 414 (Figure 5): 69% "
+          "less time, matching the 69% it saves in tokens."),
+        Fig(F.walltime(), B("SSD reaches on-policy accuracy in 69% less training time. "), "Test accuracy against training time on "
+            "Science Q&A (Qwen3-4B-Instruct-2507) for the stronger off-policy baseline, on-policy SDFT and SSD. Lines are means over "
+            "three training seeds and bands show ±1 standard deviation. The arrow runs from the best on-policy accuracy, at about 414 "
+            "minutes, to the first point where SSD reaches it, at about 130. Evaluation time is excluded, the off-policy curve "
+            "includes the time spent sampling its teacher targets, and SSD runs its teacher on a second GPU.", wide=False),
+        P("A teacher in the loop sounds slow, since SSD needs the teacher's opinion at every step before it can pick a token. But "
+          "on-policy self-distillation already asks the teacher about every token; that is the training signal. SSD simply asks "
+          "while the rollout is being written rather than after. We run the two models side by side on separate GPUs in a "
+          "modified vLLM engine, so a joint decoding step runs at about 92% of the speed of the student decoding alone.",
+          *n.note("At each step the teacher sends the student only its final hidden state, 2,560 numbers instead of a 151,936-entry "
+                  "logit vector, and its hidden states are reused for the loss, so no second teacher pass is needed. The cost is a "
+                  "second GPU for the teacher. The design is in Appendix B.7 of the ", A("paper", href=PAPER, target="_blank",
+                  rel="noopener"), ", and the engine is in ", A(Code("paired_vllm/"), href=CODE + "/tree/main/paired_vllm",
+                  target="_blank", rel="noopener"), "."),
+          " As a result, SSD and on-policy training cost almost the same per token (41.4 and 41.5 minutes per million supervised "
+          "tokens), and SSD simply needs far fewer of them."),
+
         H2("One knob from off- to on-policy", id="knob"),
-        P("Figure 5 sweeps the threshold on Company Memo. At small τ the teacher intervenes often: few tokens are supervised and "
+        P("Figure 6 sweeps the threshold on Company Memo. At small τ the teacher intervenes often: few tokens are supervised and "
           "final accuracy is close to off-policy. As τ grows, more of each rollout is written by the student, and accuracy rises "
           "toward the on-policy level along with the cost. Intermediate thresholds reach higher accuracy than off-policy while "
           "using fewer supervised tokens than on-policy, so SSD traces a Pareto frontier between the two."),
@@ -291,7 +307,7 @@ def article(n: Notes):
             "curve is a guide to the eye; hover over a point for its values.", wide=False),
 
         H2("The teacher steps back on its own", id="curriculum"),
-        P("SSD has no schedule for how much the teacher participates, and Figure 6 shows that none is needed. Early in training the student and the teacher disagree at many positions, and the teacher "
+        P("SSD has no schedule for how much the teacher participates, and Figure 7 shows that none is needed. Early in training the student and the teacher disagree at many positions, and the teacher "
           "writes a large share of each rollout, up to 43% of tokens at the lowest threshold. As the student learns the document, "
           "the switch fires less often and teacher involvement decays for every threshold."),
         Fig(F.curriculum(), B("Teacher involvement decays without a schedule. "), "SSD on Company Memo with four JSD thresholds. Left: "
@@ -307,11 +323,11 @@ def article(n: Notes):
           "supervised fine-tuning,", *n.cite("sdft"), " and because SSD keeps rollouts close to the student's distribution we "
           "expected it to share this property. With Qwen3-4B we saw little forgetting under any method, likely because the model "
           "was already post-trained on data resembling the evaluation suite. We therefore follow the SDFT protocol and fine-tune "
-          "Qwen2.5-7B-Instruct on SciKnowEval chemistry, measuring in-domain accuracy against the average change on six general benchmarks."),
-        Fig(F.forgetting(), B("SSD learns the new domain with the least forgetting. "), "In-domain accuracy on SciKnowEval chemistry "
-            "against the average change on six general benchmarks (HellaSwag, HumanEval, IFEval, MMLU, TruthfulQA, Winogrande) after "
-            "fine-tuning Qwen2.5-7B-Instruct. Labels give supervised tokens. Up and to the right is "
-            "better.", wide=False),
+          "Qwen2.5-7B-Instruct on Science Q&A (SciKnowEval chemistry), measuring in-domain accuracy against the average change on six general benchmarks."),
+        Fig(F.forgetting(), B("SSD learns the new domain with the least forgetting. "), "Science Q&A accuracy against the average change "
+            "on six general benchmarks (HellaSwag, HumanEval, IFEval, MMLU, TruthfulQA, Winogrande) after fine-tuning "
+            "Qwen2.5-7B-Instruct. Each arrow starts at the base model and ends where a method finishes; off-policy shows FKL, the "
+            "better of SFT and FKL. Hover over a point for its values.", wide=False),
         P("The off-policy methods SFT and FKL learn the new skill but lose about 6.6 points on the general benchmarks. On-policy "
           "SDFT loses 4.5 while reaching higher in-domain accuracy. SSD has both the highest in-domain accuracy (73.5, against 71.0 "
           "for SDFT) and the smallest loss (−1.4), while using 23% fewer supervised tokens than SDFT."),
@@ -321,7 +337,7 @@ def article(n: Notes):
         cls="content")
 
 
-CAPTURE = {"method": MethodFigure, "fork": F.fork, "signal": F.signal, "headline": F.headline,
+CAPTURE = {"method": MethodFigure, "walltime": F.walltime, "fork": F.fork, "signal": F.signal, "headline": F.headline,
            "tau_frontier": F.tau_frontier, "curriculum": F.curriculum, "forgetting": F.forgetting}
 
 
